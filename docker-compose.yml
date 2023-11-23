@@ -1,0 +1,14 @@
+version: "3.5"
+services:
+  node:
+    image: node:alpine
+    environment:
+      DISCORD_WEBHOOK_URL: YourDiscordWebhookUrl
+      SMTP_USERNAME: username
+      SMTP_PASSWORD: password
+    volumes:
+      - ./app:/app
+    working_dir: /app
+    ports:
+      - 1025:25
+    command: ["sh", "-c", "npm install && npm start"]

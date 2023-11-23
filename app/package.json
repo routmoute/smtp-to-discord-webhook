@@ -1,0 +1,29 @@
+{
+  "name": "smtp-to-discord-webhook",
+  "version": "0.0.1",
+  "description": "A simple smtp to discord webhook relay",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/routmoute/smtp-to-discord-webhook.git"
+  },
+  "keywords": [
+    "smtp",
+    "discord",
+    "webhook",
+    "relay"
+  ],
+  "author": "Routmoute",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/routmoute/smtp-to-discord-webhook/issues"
+  },
+  "homepage": "https://github.com/routmoute/smtp-to-discord-webhook#readme",
+  "dependencies": {
+    "smtp-server": "^3.13.0"
+  }
+}
