@@ -1,6 +1,6 @@
 {
   "name": "smtp-to-discord-webhook",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A simple smtp to discord webhook relay",
   "main": "index.js",
   "scripts": {
