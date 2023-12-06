@@ -34,16 +34,24 @@ const server = new SMTPServer({
     stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
 
     stream.on('end', () => {
-
-      const message = Buffer.concat(chunks).toString('utf8').split('\r\n');
-      const subject = message[4].split(': ')[1];
+      const message = Buffer.concat(chunks).toString('utf8').split('\r\n\r\n');
+      const head = message[0].split('\r\n');
+      const body = message[1];
 
       let decodedMessage;
-      if (message[6].split(': ')[1] == 'base64') {
-        decodedMessage = Buffer.from(message[8], 'base64').toString('utf8');
-      } else {
-        decodedMessage = message[8].split('=0D=0A').join('\r\n');
-      }
+      let subject;
+      head.forEach(elem => {
+        const splittedElem = elem.split(': ');
+        if (splittedElem[0] == 'Content-Type') {
+          if (splittedElem[1] == 'base64') {
+            decodedMessage = Buffer.from(body, 'base64').toString('utf8');
+          } else {
+            decodedMessage = body.split('=0D=0A').join('\r\n');
+          }
+        } else if (splittedElem[0] == 'Subject') {
+          subject = splittedElem[1];
+        }
+      });
 
       fetch(discordWebhookUrl, {
         method: 'POST',
