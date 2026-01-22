@@ -14,6 +14,7 @@ if (discordWebhookUrl == undefined || discordWebhookUrl == "") {
 }
 
 const SMTPServer = require("smtp-server").SMTPServer;
+const { simpleParser } = require("mailparser");
 const server = new SMTPServer({
   secure: false,
   allowInsecureAuth: true,
@@ -30,53 +31,39 @@ const server = new SMTPServer({
   onData(stream, session, callback) {
     console.log("A message has been received.");
 
-    const chunks = [];
-    stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
+    simpleParser(stream, async (err, parsed) => {
+      if (err) {
+        console.log("Error: Failed to parse email: %s", err.message);
+        return callback();
+      }
 
-    stream.on('end', () => {
-      const message = Buffer.concat(chunks).toString('utf8').split('\r\n\r\n');
-      const head = message[0].split('\r\n');
-      const body = message[1];
+      const subject = parsed.subject || "(No Subject)";
+      const text = parsed.text || parsed.html || "(No content)";
 
-      let decodedMessage;
-      let subject;
-      head.forEach(elem => {
-        const splittedElem = elem.split(': ');
-        if (splittedElem[0] == 'Content-Type') {
-          if (splittedElem[1] == 'base64') {
-            decodedMessage = Buffer.from(body, 'base64').toString('utf8');
-          } else {
-            decodedMessage = body.split('=0D=0A').join('\r\n');
-          }
-        } else if (splittedElem[0] == 'Subject') {
-          subject = splittedElem[1];
-        }
-      });
+      try {
+        const response = await fetch(discordWebhookUrl, {
+          method: 'POST',
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            embeds: [{
+              title: subject,
+              description: text.substring(0, 4096) // Discord embed limit
+            }]
+          })
+        });
 
-      fetch(discordWebhookUrl, {
-        method: 'POST',
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          embeds: [{
-            title: subject,
-            description: decodedMessage
-          }]
-        })
-      }).then((res) => {
-        if (res.status < 200 || res.status > 299) {
-          res.text().then((textRes) => {
-            console.log("Error: Send to discord failed: %s", textRes);
-          }).catch((err) => {
-            console.log("Error: Discord response parse failed: %s", err);
-          });
+        if (response.status < 200 || response.status > 299) {
+          const errorText = await response.text();
+          console.log("Error: Send to discord failed: %s", errorText);
         } else {
-          console.log("Message sended to Discord.");
+          console.log("Message sent to Discord.");
         }
-      }).catch((err) => {
-        console.log("Error: Send to discord failed: %s", err);
-      });
+      } catch (err) {
+        console.log("Error: Send to discord failed: %s", err.message);
+      }
+
       callback();
     });
   }

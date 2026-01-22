@@ -14,7 +14,6 @@ docker run -d -p 1025:25 \
 
 ### Docker-compose
 ```yaml
-version: "3.8"
 services:
   smtp-to-discord-webhook:
     image: routmoute/smtp-to-discord-webhook
