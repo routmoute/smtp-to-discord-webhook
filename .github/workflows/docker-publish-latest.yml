@@ -1,4 +1,6 @@
 name: CI to Docker Hub
+permissions:
+  contents: read
 
 on:
   push:
