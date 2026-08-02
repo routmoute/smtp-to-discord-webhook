@@ -25,6 +25,6 @@
   "homepage": "https://github.com/routmoute/smtp-to-discord-webhook#readme",
   "dependencies": {
     "smtp-server": "^3.19.1",
-    "mailparser": "^3.9.11"
+    "mailparser": "^3.9.14"
   }
 }
