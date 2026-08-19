@@ -1,6 +1,6 @@
 {
   "name": "smtp-to-discord-webhook",
-  "version": "0.1.2",
+  "version": "0.1.5",
   "description": "A simple smtp to discord webhook relay",
   "main": "index.js",
   "scripts": {
@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/routmoute/smtp-to-discord-webhook#readme",
   "dependencies": {
-    "smtp-server": "^3.19.1",
-    "mailparser": "^3.9.14"
+    "smtp-server": "^3.19.3",
+    "mailparser": "^3.9.15"
   }
 }
